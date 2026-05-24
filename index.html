@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interstar d.o.o. — Trdno na tleh, stabilno v prihodnost</title>
+<meta name="description" content="Interstar d.o.o. — gradbeno podjetje s sedežem v Štorah. Specializirani za nizko gradnjo, asfaltiranje, komunalno infrastrukturo in izredne prevoze. Od leta 1999.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow: #FFD400;
+  --yellow-deep: #F5B800;
+  --yellow-soft: #FFF3B0;
+  --black: #0A0A0A;
+  --black-soft: #141414;
+  --black-mid: #1C1C1C;
+  --gray-line: #2A2A2A;
+  --gray-text: #999999;
+  --white: #F5F5F0;
+  --red-accent: #E63946;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  overflow-x: hidden;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ====== GRAIN/NOISE OVERLAY ====== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ====== CURSOR DOT ====== */
+.cursor-dot {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--yellow);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  transition: width 0.3s, height 0.3s;
+}
+@media (max-width: 768px) { .cursor-dot { display: none; } }
+
+/* ====== NAV ====== */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10,10,10,0.7);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--gray-line);
+  transition: padding 0.3s;
+}
+.nav.scrolled { padding: 14px 40px; }
+.nav-logo {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--white);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo-img {
+  height: 56px;
+  width: auto;
+  display: block;
+  transition: transform 0.3s, height 0.3s;
+}
+.nav-logo:hover .nav-logo-img { transform: scale(1.05); }
+.nav.scrolled .nav-logo-img { height: 46px; }
+@media (max-width: 600px) {
+  .nav-logo-img { height: 42px; }
+  .nav.scrolled .nav-logo-img { height: 36px; }
+}
+.nav-logo .dot {
+  width: 10px; height: 10px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--yellow); }
+  50% { box-shadow: 0 0 0 8px transparent; }
+}
+.nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+.nav-links a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 0;
+  width: 0; height: 2px;
+  background: var(--yellow);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--yellow); }
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  background: var(--yellow);
+  color: var(--black) !important;
+  padding: 12px 22px;
+  border-radius: 0;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  transition: all 0.3s !important;
+}
+.nav-cta::after { display: none; }
+.nav-cta:hover { background: var(--white); transform: translateY(-2px); }
+
+.mobile-toggle { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; }
+.mobile-toggle span { width: 28px; height: 2px; background: var(--white); transition: 0.3s; }
+.mobile-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.mobile-toggle.active span:nth-child(2) { opacity: 0; }
+.mobile-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+@media (max-width: 900px) {
+  .nav { padding: 16px 20px; }
+  .mobile-toggle { display: flex; }
+  .nav-links {
+    position: fixed;
+    top: 70px; left: 0; right: 0;
+    background: var(--black-soft);
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 24px;
+    transform: translateY(-150%);
+    transition: transform 0.4s;
+    border-bottom: 1px solid var(--gray-line);
+  }
+  .nav-links.open { transform: translateY(0); }
+  .nav-links a { font-size: 16px; }
+}
+
+/* ====== HERO ====== */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 120px 40px 80px;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,212,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,212,0,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+.hero-yellow-blob {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: var(--yellow);
+  border-radius: 50%;
+  filter: blur(180px);
+  opacity: 0.18;
+  top: 20%; right: -10%;
+  animation: float 20s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0,0); }
+  50% { transform: translate(-50px, 30px); }
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+.hero-tag::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--yellow);
+  border-radius: 50%;
+}
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: clamp(48px, 8vw, 120px);
+  line-height: 0.95;
+  letter-spacing: -3px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+.hero-title .accent {
+  color: var(--yellow);
+  position: relative;
+  display: inline-block;
+}
+.hero-title .accent::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 8px;
+  background: var(--black);
+}
+.hero-subtitle {
+  font-size: clamp(16px, 1.4vw, 19px);
+  color: var(--gray-text);
+  max-width: 540px;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+.hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 32px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+}
+.btn-primary {
+  background: var(--yellow);
+  color: var(--black);
+}
+.btn-primary:hover {
+  background: var(--white);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(255,212,0,0.25);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--gray-text);
+}
+.btn-ghost:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.btn .arrow {
+  transition: transform 0.3s;
+}
+.btn:hover .arrow { transform: translateX(4px); }
+
+.hero-stats {
+  position: relative;
+}
+.stat-card {
+  background: var(--black-soft);
+  border: 1px solid var(--gray-line);
+  padding: 30px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s;
+}
+.stat-card:hover {
+  border-color: var(--yellow);
+  transform: translateX(-6px);
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--yellow);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.4s;
+}
+.stat-card:hover::before { transform: scaleY(1); }
+.stat-num {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 64px;
+  color: var(--yellow);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.stat-num .plus { font-size: 32px; vertical-align: top; margin-left: 4px; }
+.stat-label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-text);
+  margin-top: 8px;
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  color: var(--gray-text);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.scroll-hint .line {
+  width: 1px;
+  height: 30px;
+  background: var(--gray-text);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-hint .line::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  width: 100%; height: 50%;
+  background: var(--yellow);
+  animation: scrollDown 2s infinite;
+}
+@keyframes scrollDown {
+  0% { top: -100%; }
+  100% { top: 200%; }
+}
+
+@media (max-width: 900px) {
+  .hero { padding: 100px 20px 60px; }
+  .hero-content { grid-template-columns: 1fr; gap: 40px; }
+  .scroll-hint { display: none; }
+}
+
+/* ====== MARQUEE ====== */
+.marquee {
+  background: var(--yellow);
+  color: var(--black);
+  padding: 22px 0;
+  overflow: hidden;
+  border-top: 1px solid var(--black);
+  border-bottom: 1px solid var(--black);
+}
+.marquee-track {
+  display: flex;
+  gap: 60px;
+  white-space: nowrap;
+  animation: scroll 25s linear infinite;
+  font-family: 'Poppins', sans-serif;
+  font-size: 32px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.marquee-track span { display: flex; align-items: center; gap: 60px; }
+.marquee-track .sep {
+  display: inline-block;
+  width: 12px; height: 12px;
+  background: var(--black);
+  transform: rotate(45deg);
+}
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ====== SECTIONS ====== */
+section { padding: 120px 40px; position: relative; }
+.container { max-width: 1400px; margin: 0 auto; }
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 80px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--yellow);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.section-label::before {
+  content: '';
+  width: 30px; height: 1px;
+  background: var(--yellow);
+}
+.section-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: clamp(40px, 6vw, 80px);
+  line-height: 1;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  max-width: 900px;
+}
+.section-title .yellow { color: var(--yellow); }
+.section-intro {
+  max-width: 420px;
+  color: var(--gray-text);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+@media (max-width: 768px) { section { padding: 80px 20px; } .section-header { margin-bottom: 50px; } }
+
+/* ====== O NAS ====== */
+.about { background: var(--black-soft); border-top: 1px solid var(--gray-line); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.about-image-wrap {
+  position: relative;
+  aspect-ratio: 4/5;
+  background: var(--black);
+  border: 1px solid var(--gray-line);
+  overflow: hidden;
+}
+.about-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+.about-image-wrap:hover .about-image {
+  transform: scale(1.05);
+}
+.about-image-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,212,0,0.03) 20px, rgba(255,212,0,0.03) 40px);
+}
+.image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: var(--gray-text);
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  gap: 14px;
+}
+.image-placeholder svg { width: 50px; height: 50px; opacity: 0.4; }
+.about-image-wrap .yellow-corner {
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 130px; height: 130px;
+  background: var(--yellow);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--black);
+  text-align: center;
+  line-height: 1;
+  gap: 6px;
+  transform: rotate(-6deg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.about-image-wrap .yellow-corner::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 2px solid var(--black);
+  border-style: dashed;
+}
+.yellow-corner .est-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+}
+.yellow-corner .est-year {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: 38px;
+  letter-spacing: -1px;
+}
+.about-content h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1;
+  margin-bottom: 30px;
+  letter-spacing: -1px;
+}
+.about-content p {
+  color: var(--gray-text);
+  margin-bottom: 20px;
+  font-size: 17px;
+  line-height: 1.7;
+}
+.about-content p strong { color: var(--white); }
+
+.timeline {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.timeline-item {
+  display: flex;
+  gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid var(--gray-line);
+}
+.timeline-item:first-child { border-top: none; }
+.timeline-year {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--yellow);
+  flex-shrink: 0;
+  width: 100px;
+}
+.timeline-text { color: var(--white); padding-top: 6px; }
+
+@media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; } }
+
+/* ====== STORITVE ====== */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--gray-line);
+  border: 1px solid var(--gray-line);
+}
+.service-card {
+  background: var(--black);
+  padding: 50px 40px;
+  position: relative;
+  transition: all 0.5s;
+  cursor: pointer;
+  overflow: hidden;
+}
+.service-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--yellow);
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+.service-card:hover::after { transform: translateY(0); }
+.service-card > * { position: relative; z-index: 1; transition: color 0.4s; }
+.service-card:hover h4,
+.service-card:hover p,
+.service-card:hover li,
+.service-card:hover .service-num,
+.service-card:hover .service-icon-wrap { color: var(--black); }
+.service-card:hover .service-icon-wrap { border-color: var(--black); }
+.service-card:hover li::before { background: var(--black); }
+
+.service-num {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: var(--gray-text);
+  letter-spacing: 3px;
+  margin-bottom: 30px;
+}
+.service-icon-wrap {
+  width: 60px; height: 60px;
+  border: 1px solid var(--yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  color: var(--yellow);
+  transition: all 0.4s;
+}
+.service-icon-wrap svg { width: 28px; height: 28px; }
+.service-card h4 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.service-card > p {
+  color: var(--gray-text);
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+.service-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.service-card li {
+  color: var(--white);
+  font-size: 14px;
+  padding-left: 20px;
+  position: relative;
+}
+.service-card li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 9px;
+  width: 8px; height: 2px;
+  background: var(--yellow);
+  transition: background 0.4s;
+}
+
+@media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } .service-card { padding: 40px 24px; } }
+
+/* ====== VOZNI PARK ====== */
+.fleet { background: var(--black-soft); border-top: 1px solid var(--gray-line); border-bottom: 1px solid var(--gray-line); }
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.fleet-card {
+  background: var(--black);
+  border: 1px solid var(--gray-line);
+  padding: 30px 24px;
+  text-align: center;
+  position: relative;
+  transition: all 0.4s;
+  overflow: hidden;
+}
+.fleet-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--yellow);
+  transition: all 0.4s;
+  transform: translateX(-50%);
+}
+.fleet-card:hover { border-color: var(--yellow); transform: translateY(-6px); }
+.fleet-card:hover::before { width: 100%; }
+.fleet-card:hover .fleet-icon svg { transform: scale(1.1) rotate(-2deg); }
+.fleet-icon {
+  width: 70px;
+  height: 50px;
+  margin: 0 auto 14px;
+  color: var(--yellow);
+}
+.fleet-icon svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fleet-count {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: 42px;
+  color: var(--yellow);
+  line-height: 1;
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+.fleet-count .unit {
+  font-size: 22px;
+  margin-left: 2px;
+  font-weight: 700;
+}
+.fleet-card h5 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.fleet-card p {
+  color: var(--gray-text);
+  font-size: 13px;
+}
+.fleet-total {
+  text-align: center;
+  margin-top: 60px;
+  padding: 50px;
+  border: 1px solid var(--gray-line);
+  background: var(--black);
+  position: relative;
+}
+.fleet-total::before, .fleet-total::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  border: 2px solid var(--yellow);
+}
+.fleet-total::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.fleet-total::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+.fleet-total h4 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 48px);
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.fleet-total h4 .yellow { color: var(--yellow); }
+.fleet-total p { color: var(--gray-text); max-width: 600px; margin: 0 auto; }
+
+@media (max-width: 900px) { .fleet-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .fleet-grid { grid-template-columns: 1fr; } }
+
+/* ====== REFERENCE / PROJEKTI ====== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.project-card {
+  background: var(--black-soft);
+  border: 1px solid var(--gray-line);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.5s;
+  position: relative;
+}
+.project-card:hover { transform: translateY(-8px); border-color: var(--yellow); }
+.project-image {
+  aspect-ratio: 4/3;
+  background: var(--black);
+  position: relative;
+  overflow: hidden;
+}
+.project-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.project-card:hover .project-image img {
+  transform: scale(1.08);
+}
+.project-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,0.4) 0%, transparent 50%);
+  z-index: 1;
+  pointer-events: none;
+}
+.project-info { padding: 24px; }
+.project-tag {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 10px;
+}
+.project-info h5 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+}
+.project-info p {
+  color: var(--gray-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
+
+/* ====== TESTIMONIALS ====== */
+/* ====== TESTIMONIALS — MARQUEE ====== */
+.testimonials {
+  background: var(--black-soft);
+  border-top: 1px solid var(--gray-line);
+  padding: 120px 0;
+  overflow: hidden;
+}
+.testimonials .container { padding: 0 40px; }
+.testimonials-meta { display: flex; align-items: flex-end; }
+.meta-rating {
+  text-align: right;
+}
+.rating-num {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: 64px;
+  color: var(--yellow);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.rating-num span {
+  font-size: 28px;
+  color: var(--gray-text);
+  font-weight: 600;
+}
+.rating-stars {
+  color: var(--yellow);
+  letter-spacing: 4px;
+  font-size: 22px;
+  margin: 8px 0 4px;
+}
+.rating-count {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-text);
+}
+
+.testimonials-marquee {
+  overflow: hidden;
+  margin: 30px 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+.testimonials-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+}
+.track-left { animation: marquee-left 80s linear infinite; }
+.track-right { animation: marquee-right 80s linear infinite; }
+.testimonials-marquee:hover .testimonials-track { animation-play-state: paused; }
+
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 10px)); }
+}
+@keyframes marquee-right {
+  0% { transform: translateX(calc(-50% - 10px)); }
+  100% { transform: translateX(0); }
+}
+
+.testimonial-card {
+  background: var(--black);
+  border: 1px solid var(--gray-line);
+  padding: 32px;
+  width: 380px;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.4s;
+  display: flex;
+  flex-direction: column;
+}
+.testimonial-card:hover {
+  border-color: var(--yellow);
+  transform: translateY(-4px);
+}
+.testimonial-card .quote {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 70px;
+  color: var(--yellow);
+  line-height: 0.5;
+  margin-bottom: 14px;
+}
+.testimonial-card p {
+  color: var(--white);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+.testimonial-author {
+  border-top: 1px solid var(--gray-line);
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.testimonial-author strong {
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.testimonial-author span {
+  font-size: 12px;
+  color: var(--gray-text);
+  letter-spacing: 1px;
+}
+.stars { color: var(--yellow); letter-spacing: 2px; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .testimonials { padding: 80px 0; }
+  .testimonials .container { padding: 0 20px; }
+  .testimonial-card { width: 300px; padding: 26px; }
+  .rating-num { font-size: 48px; }
+}
+
+/* ====== ZAKAJ MI ====== */
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--gray-line);
+  border: 1px solid var(--gray-line);
+}
+.why-card {
+  background: var(--black);
+  padding: 50px 40px;
+  transition: background 0.4s;
+}
+.why-card:hover { background: var(--black-soft); }
+.why-icon {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 100px;
+  color: var(--yellow);
+  line-height: 1;
+  margin-bottom: 20px;
+  letter-spacing: -3px;
+}
+.why-card h5 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+}
+.why-card p { color: var(--gray-text); font-size: 15px; line-height: 1.7; }
+
+@media (max-width: 900px) { .why-grid { grid-template-columns: 1fr; } }
+
+/* ====== CTA SECTION (CALL & MAIL ONLY) ====== */
+.cta-section {
+  background: var(--yellow);
+  color: var(--black);
+  padding: 140px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.cta-section::after {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  border: 80px solid rgba(0,0,0,0.05);
+  border-radius: 50%;
+  top: -250px; right: -250px;
+  pointer-events: none;
+}
+.cta-container {
+  position: relative;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+.cta-center { text-align: center; }
+.cta-center .section-label {
+  color: var(--black);
+  justify-content: center;
+  display: inline-flex;
+}
+.cta-center .section-label::before { background: var(--black); }
+.cta-center h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: clamp(48px, 8vw, 110px);
+  line-height: 0.95;
+  letter-spacing: -3px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+.underline-yellow {
+  position: relative;
+  display: inline-block;
+}
+.underline-yellow::after {
+  content: '';
+  position: absolute;
+  bottom: 8px; left: 0;
+  width: 100%; height: 12px;
+  background: var(--black);
+  opacity: 0.15;
+  z-index: -1;
+}
+.cta-center > p {
+  font-size: clamp(17px, 1.6vw, 21px);
+  max-width: 600px;
+  margin: 0 auto 60px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+.contact-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 50px;
+}
+.contact-card {
+  background: var(--black);
+  color: var(--white);
+  padding: 50px 30px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 3px solid var(--black);
+}
+.contact-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--white);
+  transform: translateY(101%);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.contact-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+.contact-card:hover::before { transform: translateY(0); }
+.contact-card > * { position: relative; z-index: 1; transition: color 0.4s; }
+.contact-card:hover .contact-card-label,
+.contact-card:hover .contact-card-value,
+.contact-card:hover .contact-card-cta { color: var(--black); }
+.contact-card:hover .contact-icon { background: var(--black); color: var(--yellow); }
+.contact-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--yellow);
+  color: var(--black);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  transition: all 0.4s;
+}
+.contact-icon svg { width: 36px; height: 36px; }
+.contact-card-label {
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gray-text);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+.contact-card-value {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+  color: var(--white);
+  word-break: break-word;
+}
+.contact-card-value.email-val { font-size: 20px; letter-spacing: -0.5px; }
+.contact-card-cta {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--yellow);
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  width: 100%;
+  text-align: center;
+  margin-top: auto;
+}
+.cta-footer-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  background: var(--black);
+  color: var(--yellow);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+@media (max-width: 900px) {
+  .cta-section { padding: 80px 20px; }
+  .contact-cards { grid-template-columns: 1fr; gap: 16px; }
+  .contact-card { padding: 40px 24px; }
+  .contact-card-value { font-size: 24px; }
+  .contact-card-value.email-val { font-size: 18px; }
+}
+
+
+/* ====== FOOTER ====== */
+footer {
+  background: var(--black);
+  padding: 80px 40px 30px;
+  border-top: 1px solid var(--gray-line);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 50px;
+  max-width: 1400px;
+  margin: 0 auto 50px;
+}
+.footer-brand h4 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 40px;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+.footer-logo-img {
+  height: 60px;
+  width: auto;
+  margin-bottom: 24px;
+  display: block;
+}
+.footer-brand p { color: var(--gray-text); font-size: 14px; max-width: 320px; line-height: 1.7; }
+.footer-col h6 {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a {
+  color: var(--gray-text);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+.footer-col a:hover { color: var(--yellow); }
+.footer-col address { font-style: normal; color: var(--gray-text); font-size: 14px; line-height: 1.7; }
+.footer-bottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 30px;
+  border-top: 1px solid var(--gray-line);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--gray-text);
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  footer { padding: 60px 20px 20px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+}
+@media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* ====== REVEAL ANIMATIONS ====== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* Floating call button */
+.float-call {
+  position: fixed;
+  bottom: 30px; right: 30px;
+  width: 60px; height: 60px;
+  background: var(--yellow);
+  color: var(--black);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  z-index: 95;
+  animation: bounce 3s infinite;
+  transition: transform 0.3s;
+}
+.float-call:hover { transform: scale(1.1); }
+.float-call svg { width: 26px; height: 26px; }
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@media (max-width: 600px) {
+  .float-call { width: 56px; height: 56px; bottom: 20px; right: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursor"></div>
+
+<!-- =========== NAV =========== -->
+<nav class="nav" id="nav">
+  <a href="#home" class="nav-logo">
+    <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a1339beb3e0c02fe7e1ac36.png" alt="Interstar d.o.o." class="nav-logo-img">
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#o-nas">O nas</a></li>
+    <li><a href="#storitve">Storitve</a></li>
+    <li><a href="#vozni-park">Vozni park</a></li>
+    <li><a href="#reference">Reference</a></li>
+    <li><a href="#kontakt" class="nav-cta">Pokliči →</a></li>
+  </ul>
+  <button class="mobile-toggle" id="mobileToggle">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- =========== HERO =========== -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-yellow-blob"></div>
+
+  <div class="hero-content">
+    <div>
+      <div class="hero-tag reveal">Gradbeno podjetje · od 1999</div>
+      <h1 class="hero-title reveal reveal-delay-1">
+        Trdno na tleh,<br>
+        stabilno v <span class="accent">prihodnost</span>
+      </h1>
+      <p class="hero-subtitle reveal reveal-delay-2">
+        Specialisti za nizko gradnjo. Ceste, asfaltiranje, komunalna infrastruktura
+        in izredni prevozi. Z lastnim voznim parkom 25+ strojev gradimo temelje
+        slovenske infrastrukture že več kot 25 let.
+      </p>
+      <div class="hero-ctas reveal reveal-delay-3">
+        <a href="tel:041624728" class="btn btn-primary">
+          Pokliči zdaj
+          <span class="arrow">→</span>
+        </a>
+        <a href="mailto:interstar.doo@gmail.com" class="btn btn-ghost">
+          Pošlji email
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-card reveal reveal-delay-1">
+        <div class="stat-num" data-count="26">0<span class="plus">+</span></div>
+        <div class="stat-label">Let izkušenj</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2">
+        <div class="stat-num" data-count="24">0</div>
+        <div class="stat-label">Zaposlenih strokovnjakov</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-3">
+        <div class="stat-num" data-count="30">0<span class="plus">+</span></div>
+        <div class="stat-label">Strojev v voznem parku</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-4">
+        <div class="stat-num" data-count="500">0<span class="plus">+</span></div>
+        <div class="stat-label">Zaključenih projektov</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="line"></div>
+  </div>
+</section>
+
+<!-- =========== MARQUEE =========== -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Nizka gradnja <span class="sep"></span> Asfaltiranje <span class="sep"></span> Komunalna infrastruktura <span class="sep"></span> Izredni prevozi <span class="sep"></span> Urejanje okolice <span class="sep"></span> Kabelske kanalizacije <span class="sep"></span></span>
+    <span>Nizka gradnja <span class="sep"></span> Asfaltiranje <span class="sep"></span> Komunalna infrastruktura <span class="sep"></span> Izredni prevozi <span class="sep"></span> Urejanje okolice <span class="sep"></span> Kabelske kanalizacije <span class="sep"></span></span>
+  </div>
+</div>
+
+<!-- =========== O NAS =========== -->
+<section class="about" id="o-nas">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label reveal">O podjetju</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          25 let<br>gradnje<br><span class="yellow">temeljev.</span>
+        </h2>
+      </div>
+      <p class="section-intro reveal reveal-delay-2">
+        Interstar je družinsko gradbeno podjetje s sedežem v Štorah.
+        Začeli smo leta 1999 z eno samo idejo — opraviti dobro delo, na čas, brez izgovorov.
+      </p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-image-wrap reveal">
+        <div class="yellow-corner">
+          <span class="est-label">EST.</span>
+          <span class="est-year">1999</span>
+        </div>
+        <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a1341263c3aed7c63aae725.jpg" alt="Interstar ekipa" class="about-image" loading="lazy">
+      </div>
+
+      <div class="about-content reveal reveal-delay-1">
+        <h3>Družinsko podjetje<br>z <span style="color: var(--yellow);">jasno vizijo.</span></h3>
+        <p>
+          <strong>Interstar d.o.o.</strong> deluje na področju gradbeništva že od leta 1999.
+          Specializirani smo za <strong>nizko gradnjo</strong> — od priprave terena in asfaltiranja
+          do kompleksne komunalne infrastrukture.
+        </p>
+        <p>
+          Leta 2008 smo kupili zemljišče v Štorah in pričeli z gradnjo lastnega
+          poslovnega objekta, kamor smo se uradno preselili leta 2015. Danes zaposlujemo
+          <strong>24 strokovnjakov</strong> in razpolagamo z enim najmočnejših voznih parkov v regiji.
+        </p>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-year">1999</div>
+            <div class="timeline-text">Ustanovitev podjetja Interstar d.o.o.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2008</div>
+            <div class="timeline-text">Nakup zemljišča v Štorah in začetek gradnje sedeža</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2015</div>
+            <div class="timeline-text">Selitev v lastne poslovne prostore na Cesto na Svetino 6</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">Danes</div>
+            <div class="timeline-text">24 zaposlenih, 30+ strojev, na desetine letnih projektov</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== STORITVE =========== -->
+<section id="storitve">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label reveal">Naše storitve</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          Kaj <span class="yellow">izvajamo.</span>
+        </h2>
+      </div>
+      <p class="section-intro reveal reveal-delay-2">
+        Celotni paket storitev nizke gradnje — od prvega izkopa do zadnjega
+        sloja asfalta. En izvajalec, ena odgovornost, en kontakt.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-num">01 / 05</div>
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 20h18M5 20V8l7-5 7 5v12M9 20v-6h6v6"/>
+          </svg>
+        </div>
+        <h4>Cestna gradnja</h4>
+        <p>Gradimo ceste, dovozne poti in povezovalno infrastrukturo.</p>
+        <ul>
+          <li>Priprava in utrjevanje terena</li>
+          <li>Polaganje asfalta</li>
+          <li>Ureditev odvodnjavanja</li>
+          <li>Postavitev robnikov</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">02 / 05</div>
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="6"/>
+            <path d="M5 17v2M19 17v2M3 11l3-5h12l3 5"/>
+          </svg>
+        </div>
+        <h4>Asfaltiranje</h4>
+        <p>Grobo in fino asfaltiranje za vse površine.</p>
+        <ul>
+          <li>Dvorišča in parkirišča</li>
+          <li>Dovozne poti</li>
+          <li>Ceste in pločniki</li>
+          <li>Industrijske površine</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-num">03 / 05</div>
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v8M8 6l4-4 4 4M3 22h18M5 22V12h14v10"/>
+          </svg>
+        </div>
+        <h4>Urejanje okolice</h4>
+        <p>Zunanja ureditev stanovanjskih in poslovnih objektov.</p>
+        <ul>
+          <li>Tlakovanje dvorišč</li>
+          <li>Cestni in vrtni robniki</li>
+          <li>Stopnišča in škarpe</li>
+          <li>Drenaže in odvodnjavanje</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">04 / 05</div>
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20M12 2v20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/>
+          </svg>
+        </div>
+        <h4>Komunalna<br>infrastruktura</h4>
+        <p>Kabelske kanalizacije, vodovod, plinovod in čistilne naprave.</p>
+        <ul>
+          <li>Vodovod in plinovod</li>
+          <li>Meteorne in fekalne kanalizacije</li>
+          <li>Jaški za elektriko in telekom</li>
+          <li>Vgradnja čistilnih naprav</li>
+        </ul>
+      </div>
+
+      <div class="service-card reveal" style="grid-column: span 2;">
+        <div class="service-num">05 / 05</div>
+        <div class="service-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 17h2l2-6h11l1 6h2M5 17v3M19 17v3M7 11V7h10v4"/>
+            <circle cx="7" cy="20" r="1.5"/>
+            <circle cx="17" cy="20" r="1.5"/>
+          </svg>
+        </div>
+        <h4>Izredni prevozi</h4>
+        <p>Prevozi z posebnimi dovoljenji — kamioni vlačilci, avtodvigalo do 60t in HIAB 8t. Specializirani za nadgabaritne tovore in težko mehanizacijo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== VOZNI PARK =========== -->
+<section class="fleet" id="vozni-park">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label reveal">Naš arzenal</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          30+ strojev,<br><span class="yellow">en cilj.</span>
+        </h2>
+      </div>
+      <p class="section-intro reveal reveal-delay-2">
+        Lastni vozni park nam omogoča neodvisnost, hitrejše roke
+        in nižje stroške. Vse pod eno streho — naša streha.
+      </p>
+    </div>
+
+    <div class="fleet-grid">
+      <div class="fleet-card reveal">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Bager -->
+            <path d="M8 38h28v-8H8z"/>
+            <circle cx="14" cy="42" r="4"/>
+            <circle cx="22" cy="42" r="4"/>
+            <circle cx="30" cy="42" r="4"/>
+            <path d="M20 30v-8h12v8"/>
+            <path d="M32 22l8-10 10 4"/>
+            <path d="M50 16l4 6-6 8-6-4"/>
+            <path d="M42 30l-4 4 2 4h4"/>
+          </svg>
+        </div>
+        <div class="fleet-count">15</div>
+        <h5>Bagri</h5>
+        <p>Od 1 do 26 ton</p>
+      </div>
+      <div class="fleet-card reveal reveal-delay-1">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Avtodvigalo -->
+            <path d="M6 40h20v-8H6z"/>
+            <circle cx="12" cy="44" r="3"/>
+            <circle cx="20" cy="44" r="3"/>
+            <path d="M14 32V20h8v12"/>
+            <path d="M18 20L52 6"/>
+            <path d="M52 6l2 6"/>
+            <path d="M50 8v18"/>
+            <path d="M46 26h8"/>
+            <path d="M50 26v8"/>
+          </svg>
+        </div>
+        <div class="fleet-count">60<span class="unit">t</span></div>
+        <h5>Avtodvigalo</h5>
+        <p>LIEBHERR 60t</p>
+      </div>
+      <div class="fleet-card reveal reveal-delay-2">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Traktor -->
+            <path d="M14 36h20v-10H20l-2-8h-4v18z"/>
+            <circle cx="18" cy="40" r="5"/>
+            <circle cx="44" cy="40" r="8"/>
+            <circle cx="44" cy="40" r="3"/>
+            <path d="M34 30h6v-6h6v16"/>
+            <path d="M52 18h-6"/>
+          </svg>
+        </div>
+        <div class="fleet-count">5</div>
+        <h5>Traktorji</h5>
+        <p>Za pripravo terena</p>
+      </div>
+      <div class="fleet-card reveal reveal-delay-3">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Vlačilec -->
+            <path d="M6 38h14v-8H6z"/>
+            <path d="M20 38h38v-22H38l-4 6h-14v16z"/>
+            <circle cx="14" cy="42" r="4"/>
+            <circle cx="30" cy="42" r="4"/>
+            <circle cx="48" cy="42" r="4"/>
+            <path d="M22 22h12"/>
+          </svg>
+        </div>
+        <div class="fleet-count">4</div>
+        <h5>Vlačilci</h5>
+        <p>Za izredne prevoze</p>
+      </div>
+      <div class="fleet-card reveal">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- HIAB kamion z dvigalom -->
+            <path d="M6 38h32v-12H22l-2-4h-14v16z"/>
+            <circle cx="14" cy="42" r="4"/>
+            <circle cx="30" cy="42" r="4"/>
+            <path d="M24 26V14h8"/>
+            <path d="M32 14l16 4"/>
+            <path d="M48 18v-8"/>
+            <path d="M44 10h8"/>
+            <path d="M48 22v8"/>
+          </svg>
+        </div>
+        <div class="fleet-count">8<span class="unit">t</span></div>
+        <h5>HIAB Kamion</h5>
+        <p>Dvižna naprava</p>
+      </div>
+      <div class="fleet-card reveal reveal-delay-1">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Buldožer -->
+            <path d="M14 36h30v-12H22l-2-4h-6v16z"/>
+            <circle cx="20" cy="40" r="4"/>
+            <circle cx="30" cy="40" r="4"/>
+            <circle cx="40" cy="40" r="4"/>
+            <path d="M8 20v18h2"/>
+            <path d="M6 38h6"/>
+            <path d="M22 24V14h10"/>
+            <path d="M44 36h6V20l-6 4"/>
+          </svg>
+        </div>
+        <div class="fleet-count">CAT</div>
+        <h5>Buldožer</h5>
+        <p>Caterpillar</p>
+      </div>
+      <div class="fleet-card reveal reveal-delay-2">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Gradbeno dvigalo -->
+            <path d="M30 44V12"/>
+            <path d="M30 12L10 16"/>
+            <path d="M30 12L54 8"/>
+            <path d="M14 14v6"/>
+            <path d="M50 10v8"/>
+            <path d="M44 10v6"/>
+            <path d="M22 13v4"/>
+            <path d="M22 44h16"/>
+            <path d="M52 8v8l-4-2"/>
+            <path d="M48 14l-2 6h4l-2-6z"/>
+          </svg>
+        </div>
+        <div class="fleet-count">▲</div>
+        <h5>Gradbeno dvigalo</h5>
+        <p>Vodeno s tal</p>
+      </div>
+      <div class="fleet-card reveal reveal-delay-3">
+        <div class="fleet-icon">
+          <svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Kontejnerski kamion -->
+            <path d="M6 38h14v-8H6z"/>
+            <path d="M20 38h36V14H22l-2 4v20z"/>
+            <circle cx="14" cy="42" r="4"/>
+            <circle cx="30" cy="42" r="4"/>
+            <circle cx="48" cy="42" r="4"/>
+            <path d="M28 22v12"/>
+            <path d="M38 22v12"/>
+            <path d="M48 22v12"/>
+          </svg>
+        </div>
+        <div class="fleet-count">●</div>
+        <h5>Kontejnerski kamion</h5>
+        <p>Odvoz odpadkov</p>
+      </div>
+    </div>
+
+    <div class="fleet-total reveal">
+      <h4>VSE <span class="yellow">POD ENO STREHO.</span></h4>
+      <p>Vsi naši stroji so v naši lasti. Brez podizvajalcev, brez čakanja, brez izgovorov. Več kot 30 enot težke mehanizacije pripravljenih za vaš projekt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =========== REFERENCE =========== -->
+<section id="reference">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label reveal">Reference</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          Naši <span class="yellow">projekti.</span>
+        </h2>
+      </div>
+      <p class="section-intro reveal reveal-delay-2">
+        Vsak projekt je dokaz našega dela.
+        Pripeljemo do konca — pravočasno in v dogovorjenih standardih.
+      </p>
+    </div>
+
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-image">
+          <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a133a883c3aed7c63aa6eae.jpg" alt="Otroško igrišče Štore" loading="lazy">
+        </div>
+        <div class="project-info">
+          <span class="project-tag">Otroška infrastruktura</span>
+          <h5>Otroško igrišče Štore</h5>
+          <p>Nogometno, košarkarsko, odbojkarsko in atletsko igrišče — vse za varno preživljanje prostega časa otrok.</p>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-1">
+        <div class="project-image">
+          <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a133a02e05851175c694269.jpg" alt="Krožno križišče Štore" loading="lazy">
+        </div>
+        <div class="project-info">
+          <span class="project-tag">Cestna infrastruktura</span>
+          <h5>Krožno križišče Štore</h5>
+          <p>Kompleksen projekt z vrhunsko izvedbo in koordinacijo, ki je izboljšal prometno varnost v kraju.</p>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-2">
+        <div class="project-image">
+          <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a133c55fe2210f89e6626a5.png" alt="Pločnik ob lokalni cesti Štore" loading="lazy">
+        </div>
+        <div class="project-info">
+          <span class="project-tag">Pločniki</span>
+          <h5>Pločnik ob lokalni cesti Štore</h5>
+          <p>Izboljšana varnost in udobje pešcev z novim pločnikom, ki se razteza vzdolž ključne lokalne ceste.</p>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-image">
+          <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a133a24fe2210f89e660038.jpg" alt="Kabelske kanalizacije Štore" loading="lazy">
+        </div>
+        <div class="project-info">
+          <span class="project-tag">Telekom infrastruktura</span>
+          <h5>Kabelske kanalizacije Štore</h5>
+          <p>Sodobna infrastruktura za elektronske komunikacije, ki omogoča hitrejšo in stabilnejšo povezljivost.</p>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-1">
+        <div class="project-image">
+          <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a133b8afe2210f89e66171c.jpg" alt="Skakalnica Ljubno" loading="lazy">
+        </div>
+        <div class="project-info">
+          <span class="project-tag">Sanacija po poplavah</span>
+          <h5>Skakalnica Ljubno</h5>
+          <p>Obnova skakalnice po poplavah za nadaljnja domača in mednarodna tekmovanja v smučarskih skokih.</p>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-2">
+        <div class="project-image">
+          <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a133c07e05851175c69659f.jpg" alt="Okolica Policijske postaje Celje" loading="lazy">
+        </div>
+        <div class="project-info">
+          <span class="project-tag">Javne ustanove</span>
+          <h5>Okolica Policijske postaje Celje</h5>
+          <p>Funkcionalna in estetska ureditev okolice — boljša dostopnost, varnostni standardi in vizualna podoba.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== ZAKAJ MI =========== -->
+<section style="background: var(--black);">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label reveal">Zakaj Interstar</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          Zakaj <span class="yellow">izbrati nas.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon">01</div>
+        <h5>Zanesljivost<br>in roki</h5>
+        <p>Spoštujemo dogovorjene roke. Strankam zagotavljamo mirnost in zaupanje, da bo projekt zaključen pravočasno in v skladu z dogovorom.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-icon">02</div>
+        <h5>Trajnost in<br>odgovornost</h5>
+        <p>Dajemo poudarek na okolju prijazne materiale in metode, ki zmanjšujejo vpliv na okolje — gradimo za prihodnost, ne zgolj za danes.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-icon">03</div>
+        <h5>Celovita<br>storitev</h5>
+        <p>Od že pripravljenih projektov do končne izvedbe. En izvajalec za vse faze — manj koordinacije, manj napak, več učinkovitosti.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== TESTIMONIALS =========== -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-label reveal">Mnenja strank</span>
+        <h2 class="section-title reveal reveal-delay-1">
+          Kaj pravijo<br><span class="yellow">tisti, ki delajo z nami.</span>
+        </h2>
+      </div>
+      <div class="testimonials-meta reveal reveal-delay-2">
+        <div class="meta-rating">
+          <div class="rating-num">4.9<span>/5</span></div>
+          <div class="rating-stars">★★★★★</div>
+          <div class="rating-count">na podlagi 200+ mnenj</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vrsta 1 - premika se levo -->
+  <div class="testimonials-marquee">
+    <div class="testimonials-track track-left">
+      <!-- ORIGINALNE 3 -->
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Hitri, zanesljivi in prijazni. Predvsem pa cenovno dostopni! Priporočam.</p>
+        <div class="testimonial-author">
+          <div><strong>Dejan K.</strong><br><span>Geopro d.o.o.</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Prijazni ljudje, hitro razkladanje brez težav. Priporočam.</p>
+        <div class="testimonial-author">
+          <div><strong>Vjačeslav K.</strong><br><span>Stranka iz tujine</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Gradbeno podjetje, ki opravlja vrhunsko delo! Profesionalni pristop, natančnost in kakovost so nad pričakovanji.</p>
+        <div class="testimonial-author">
+          <div><strong>Janez P.</strong><br><span>Zasebna stranka</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <!-- NOVA MNENJA - SET 1 -->
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Asfaltirali so nam dovoz pred hišo. Vse dogovorjeno, na minuto natančno. Cena poštena, ekipa vljudna. Top!</p>
+        <div class="testimonial-author">
+          <div><strong>Matej B.</strong><br><span>Celje</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Najemali smo bager za izkop bazena. Operater izkušen, delo opravljeno hitro in čisto. Drugič spet pri njih.</p>
+        <div class="testimonial-author">
+          <div><strong>Sašo M.</strong><br><span>Štore</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Kot občina smo z Interstarjem sodelovali na več projektih. Vedno korektno, brez zapletov, projekti zaključeni v roku.</p>
+        <div class="testimonial-author">
+          <div><strong>Tomaž R.</strong><br><span>Občinski projekt</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Izredni prevoz stroja iz Avstrije. Vse papirje uredili sami, prevoz brez incidentov. Profesionalci.</p>
+        <div class="testimonial-author">
+          <div><strong>Andrej V.</strong><br><span>Industrijska stranka</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Naredili so nam meteorno kanalizacijo okoli hiše. Razložili vse že vnaprej, delo opravili kvalitetno. Hvala!</p>
+        <div class="testimonial-author">
+          <div><strong>Petra J.</strong><br><span>Laško</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Že drugič sodelujem z njimi pri urejanju dvorišča. Vedno opravijo posel kot dogovorjeno. Zaupanja vredno podjetje.</p>
+        <div class="testimonial-author">
+          <div><strong>Robert S.</strong><br><span>Zasebna stranka</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Tlakovali so nam parkirišče za podjetje. 400m² v treh dneh, čisto razlika. Priporočam za poslovne stranke.</p>
+        <div class="testimonial-author">
+          <div><strong>Marko T.</strong><br><span>Podjetnik, Žalec</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Korektni, hitri in pošteni. Ponudbo so pripravili v dveh dneh, projekt izvedli točno po dogovoru.</p>
+        <div class="testimonial-author">
+          <div><strong>Nina Č.</strong><br><span>Investitorka</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Sanacija plazu na strmem terenu. Drugi izvajalci nas niso želeli zaradi zahtevnosti. Interstar je opravil odlično.</p>
+        <div class="testimonial-author">
+          <div><strong>Stanko O.</strong><br><span>Slovenske Konjice</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Avtodvigalo za postavitev montažne hiše. Operater zelo izkušen, vse je teklo gladko. Hvala fantje!</p>
+        <div class="testimonial-author">
+          <div><strong>Gregor P.</strong><br><span>Zasebna stranka</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Sodelovali pri večjem infrastrukturnem projektu. Komunikacija odlična, dokumentacija urejena, izvedba na nivoju.</p>
+        <div class="testimonial-author">
+          <div><strong>Damjan Ž.</strong><br><span>Projektivni inženir</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vrsta 2 - premika se desno -->
+  <div class="testimonials-marquee">
+    <div class="testimonials-track track-right">
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Postavili so nam vrtne robnike in škarpo. Delo natančno, brez napake. Najboljši v okolici!</p>
+        <div class="testimonial-author">
+          <div><strong>Aleš F.</strong><br><span>Vojnik</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Sodelovanje že več let. Vedno se lahko zanesemo nanje. Družinsko podjetje s srcem na pravem mestu.</p>
+        <div class="testimonial-author">
+          <div><strong>Igor M.</strong><br><span>Dolgoletni partner</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Pripravili teren za novogradnjo, izkopali jamo za temelje. Delo odlično, čisto za sabo. Ponovni stik prihaja.</p>
+        <div class="testimonial-author">
+          <div><strong>Klemen H.</strong><br><span>Gradnja hiše</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Kabelska kanalizacija za optiko. Vse dogovorjeno, dela zaključena brez čakanja. Bravo!</p>
+        <div class="testimonial-author">
+          <div><strong>Boštjan L.</strong><br><span>Telekom partner</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Postavili čistilno napravo, vse povezali z obstoječim sistemom. Razložili delovanje, papirje uredili. Pohvale!</p>
+        <div class="testimonial-author">
+          <div><strong>Jure A.</strong><br><span>Vikend hiša</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Asfaltiranje dvorišča pred trgovino. Hitro, profesionalno, brez zapletov za stranke. Top izvedba.</p>
+        <div class="testimonial-author">
+          <div><strong>Maja D.</strong><br><span>Trgovka, Celje</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Izkopali nam zemljo za bazen na težko dostopnem terenu. Operater izjemen, brez kakršne koli škode na okolici.</p>
+        <div class="testimonial-author">
+          <div><strong>Primož N.</strong><br><span>Šentjur</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Cenovno najbolj ugodna ponudba med tremi izvajalci, ki sem jih klical. In še delo je bilo odlično. Win-win.</p>
+        <div class="testimonial-author">
+          <div><strong>Borut G.</strong><br><span>Investitor</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Buldožer za izravnavo zemljišča pred gradnjo. Hitri, učinkoviti, korektni. Zelo zadovoljen.</p>
+        <div class="testimonial-author">
+          <div><strong>Anže K.</strong><br><span>Zasebnik</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Drenaža okoli kleti. Imeli smo težave z vlago, zdaj je vse suho. Hvala, rešili ste nam glavobol.</p>
+        <div class="testimonial-author">
+          <div><strong>Mojca B.</strong><br><span>Hiša</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Najem traktorja z operaterjem za pripravo terena. Vse v enem dnevu, kot je bilo dogovorjeno. Korektno.</p>
+        <div class="testimonial-author">
+          <div><strong>Rok S.</strong><br><span>Kmetijska parcela</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Naša gradbena ekipa redno sodeluje z njimi pri večjih projektih. Zanesljivi partnerji, brez izjeme.</p>
+        <div class="testimonial-author">
+          <div><strong>Miha V.</strong><br><span>Gradbeni partner</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Po poplavah so nam pomagali sanirati dvorišče. Hitro odzivni v izrednih razmerah, hvala!</p>
+        <div class="testimonial-author">
+          <div><strong>Polona R.</strong><br><span>Po naravni nesreči</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote">"</div>
+        <p>Iskreno priporočam. Družinsko podjetje s tradicijo in znanjem. Vse opravijo, kot je dogovorjeno — brez izgovorov.</p>
+        <div class="testimonial-author">
+          <div><strong>Bojan E.</strong><br><span>Investitor, Velenje</span></div>
+          <div class="stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== KONTAKT / CTA =========== -->
+<section class="cta-section" id="kontakt">
+  <div class="cta-container">
+    <div class="cta-center">
+      <span class="section-label reveal">Stopite v stik</span>
+      <h2 class="reveal reveal-delay-1">Pripravljeni<br>za vaš <span class="underline-yellow">projekt?</span></h2>
+      <p class="reveal reveal-delay-2">
+        Pokličite ali pošljite mail. Odzovemo se hitro,
+        ponudbo pripravimo brez obveznosti.
+      </p>
+
+      <div class="contact-cards">
+        <a href="tel:051318244" class="contact-card reveal">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <span class="contact-card-label">Pokliči Ido</span>
+          <span class="contact-card-value">051 318 244</span>
+          <span class="contact-card-cta">Pokliči zdaj →</span>
+        </a>
+
+        <a href="tel:041624728" class="contact-card reveal reveal-delay-1">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <span class="contact-card-label">Pokliči Marjana</span>
+          <span class="contact-card-value">041 624 728</span>
+          <span class="contact-card-cta">Pokliči zdaj →</span>
+        </a>
+
+        <a href="mailto:interstar.doo@gmail.com" class="contact-card reveal reveal-delay-2">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <span class="contact-card-label">Pošlji email</span>
+          <span class="contact-card-value email-val">interstar.doo@gmail.com</span>
+          <span class="contact-card-cta">Pošlji sporočilo →</span>
+        </a>
+      </div>
+
+      <div class="cta-footer-line reveal">
+        <span>⚡ Odzivamo se v 24 urah · brez obveznosti</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== FOOTER =========== -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a1339beb3e0c02fe7e1ac36.png" alt="Interstar d.o.o." class="footer-logo-img">
+      <p>Gradbeno podjetje za nizko gradnjo, asfaltiranje, komunalno infrastrukturo in izredne prevoze. Od leta 1999.</p>
+    </div>
+    <div class="footer-col">
+      <h6>Navigacija</h6>
+      <ul>
+        <li><a href="#o-nas">O nas</a></li>
+        <li><a href="#storitve">Storitve</a></li>
+        <li><a href="#vozni-park">Vozni park</a></li>
+        <li><a href="#reference">Reference</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h6>Storitve</h6>
+      <ul>
+        <li><a href="#storitve">Cestna gradnja</a></li>
+        <li><a href="#storitve">Asfaltiranje</a></li>
+        <li><a href="#storitve">Urejanje okolice</a></li>
+        <li><a href="#storitve">Komunalna infrastruktura</a></li>
+        <li><a href="#storitve">Izredni prevozi</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h6>Kontakt</h6>
+      <address>
+        Interstar d.o.o.<br>
+        Cesta na Svetino 6<br>
+        3220 Štore<br>
+        SI: 39631109<br><br>
+        <a href="tel:051318244" style="color: var(--white);">051 318 244 — Ida</a><br>
+        <a href="tel:041624728" style="color: var(--white);">041 624 728 — Marjan</a>
+      </address>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Interstar d.o.o. Vse pravice pridržane.</span>
+    <span>Trdno na tleh, stabilno v prihodnost.</span>
+  </div>
+</footer>
+
+<!-- Float call -->
+<a href="tel:041624728" class="float-call" aria-label="Pokliči">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+  </svg>
+</a>
+
+<script>
+// Cursor follower
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .service-card, .project-card, .fleet-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width = '40px'; cursor.style.height = '40px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; });
+});
+
+// Nav scroll effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+// Mobile menu
+const toggle = document.getElementById('mobileToggle');
+const navLinks = document.getElementById('navLinks');
+toggle.addEventListener('click', () => {
+  toggle.classList.toggle('active');
+  navLinks.classList.toggle('open');
+});
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    toggle.classList.remove('active');
+    navLinks.classList.remove('open');
+  });
+});
+
+// Reveal on scroll
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Animated counters
+function animateCount(el) {
+  const target = parseInt(el.dataset.count);
+  const duration = 1800;
+  const start = performance.now();
+  const plusHtml = el.querySelector('.plus') ? el.querySelector('.plus').outerHTML : '';
+
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(eased * target);
+    el.innerHTML = current + plusHtml;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.dataset.counted) {
+      entry.target.dataset.counted = 'true';
+      animateCount(entry.target);
+    }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+// Podvojim vsebino marquee track-ov za neskončno animacijo
+document.querySelectorAll('.testimonials-track').forEach(track => {
+  const cards = track.innerHTML;
+  track.innerHTML = cards + cards;
+});
+
+// Form je bil odstranjen — kontakt je samo prek call & mail
+</script>
+
+</body>
+</html>
