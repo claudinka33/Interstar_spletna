@@ -4,7 +4,31 @@ const { send, fail, db, ensureTable } = require('./_lib');
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-async function notify(row) {
+const MAX_FILES = 5;
+const MAX_TOTAL = 3.3 * 1024 * 1024; // omejitev Vercel funkcij (~4,5 MB na zahtevek)
+const TYPES = { 'application/pdf': 'pdf', 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+
+// Preveri in pripravi priložene datoteke iz obrazca.
+function parseFiles(list) {
+  if (!Array.isArray(list) || !list.length) return [];
+  if (list.length > MAX_FILES) throw new Error(`Priložite lahko največ ${MAX_FILES} datotek.`);
+  let total = 0;
+  return list.map((f) => {
+    const tip = String(f && f.type || '');
+    if (!TYPES[tip]) throw new Error('Dovoljene so samo datoteke PDF, JPG in PNG.');
+    const b64 = String(f.data || '').replace(/^data:[^;]+;base64,/, '');
+    const size = Buffer.byteLength(b64, 'base64');
+    total += size;
+    if (!size || total > MAX_TOTAL) throw new Error('Priloge so prevelike (skupaj največ 3 MB). Večje datoteke pošljite na interstar.doo@gmail.com.');
+    let ime = String(f.name || 'priloga').replace(/[\\/\r\n"]/g, '_').slice(0, 100);
+    if (!/\.[a-z0-9]{2,4}$/i.test(ime)) ime += '.' + TYPES[tip];
+    return { ime, tip, velikost: size, vsebina: b64 };
+  });
+}
+
+const fmtSize = (n) => (n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB');
+
+async function notify(row, files) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return; // e-mail obvestila še niso nastavljena
   const to = (process.env.NOTIFY_EMAIL || 'interstar.doo@gmail.com').split(',').map((s) => s.trim());
@@ -24,6 +48,7 @@ async function notify(row) {
     <div style="padding:20px;border:1px solid #eee">
       <table>${rows}</table>
       <p style="margin-top:16px;white-space:pre-wrap">${esc(row.sporocilo)}</p>
+      ${files.length ? `<p style="margin-top:16px;color:#666">📎 Priloge (${files.length}): ${files.map((f) => `${esc(f.ime)} (${fmtSize(f.velikost)})`).join(', ')} – v priponki tega e-maila in v adminu.</p>` : ''}
       <p style="margin-top:24px"><a href="https://interstar.si/admin" style="background:#FFD400;color:#000;padding:10px 18px;text-decoration:none;font-weight:bold">Odpri v adminu</a></p>
     </div></div>`;
   const r = await fetch('https://api.resend.com/emails', {
@@ -35,6 +60,7 @@ async function notify(row) {
       reply_to: row.email || undefined,
       subject: `Novo povpraševanje: ${row.ime}${row.storitev ? ' – ' + row.storitev : ''}`,
       html,
+      attachments: files.length ? files.map((f) => ({ filename: f.ime, content: f.vsebina })) : undefined,
     }),
   });
   if (!r.ok) console.error('Resend napaka', r.status, await r.text());
@@ -63,6 +89,12 @@ module.exports = async (req, res) => {
     if (row.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email)) return send(res, 400, { error: 'E-mail naslov ni pravilen.' });
     if (!row.sporocilo) return send(res, 400, { error: 'Na kratko opišite, kaj potrebujete.' });
     if (!b.soglasje) return send(res, 400, { error: 'Potrdite strinjanje s politiko zasebnosti.' });
+    let files;
+    try {
+      files = parseFiles(b.priloge);
+    } catch (e) {
+      return send(res, 400, { error: e.message });
+    }
 
     const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
     const ipHash = ip ? crypto.createHash('sha256').update(ip + (process.env.ADMIN_PASSWORD || '')).digest('hex').slice(0, 16) : null;
@@ -73,11 +105,16 @@ module.exports = async (req, res) => {
       const [{ n }] = await sql`SELECT count(*)::int AS n FROM povprasevanja WHERE ip_hash = ${ipHash} AND created_at > now() - interval '15 minutes'`;
       if (n >= 5) return send(res, 429, { error: 'Preveč poskusov. Pokličite nas na 041 624 728.' });
     }
-    await sql`INSERT INTO povprasevanja (ime, telefon, email, kraj, storitev, sporocilo, stran, ip_hash)
-              VALUES (${row.ime}, ${row.telefon}, ${row.email}, ${row.kraj}, ${row.storitev}, ${row.sporocilo}, ${row.stran}, ${ipHash})`;
+    const [{ id }] = await sql`INSERT INTO povprasevanja (ime, telefon, email, kraj, storitev, sporocilo, stran, ip_hash)
+              VALUES (${row.ime}, ${row.telefon}, ${row.email}, ${row.kraj}, ${row.storitev}, ${row.sporocilo}, ${row.stran}, ${ipHash})
+              RETURNING id`;
+    for (const f of files) {
+      await sql`INSERT INTO priloge (povprasevanje_id, ime, tip, velikost, vsebina)
+                VALUES (${id}, ${f.ime}, ${f.tip}, ${f.velikost}, ${f.vsebina})`;
+    }
 
     try {
-      await notify(row);
+      await notify(row, files);
     } catch (e) {
       console.error('Obvestilo ni bilo poslano', e);
     }

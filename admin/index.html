@@ -86,6 +86,13 @@ textarea { resize: vertical; min-height: 46px; }
 .inq .meta a { text-decoration: none; font-weight: 600; }
 .inq .tag { background: var(--bg3); padding: 2px 8px; font-size: 12px; font-weight: 600; }
 .inq .msg { white-space: pre-wrap; background: var(--bg); border: 1px solid var(--line); padding: 12px 14px; font-size: 14px; }
+.att { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.att a { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--line); padding: 6px 12px 6px 6px; text-decoration: none; color: var(--tx); font-size: 13px; max-width: 280px; }
+.att a:hover { border-color: var(--y); }
+.att img, .att .pdf { width: 44px; height: 44px; object-fit: cover; flex-shrink: 0; }
+.att .pdf { display: grid; place-items: center; background: var(--bg3); color: var(--y); font-weight: 700; font-size: 11px; }
+.att span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.att small { display: block; color: var(--mut); font-size: 11px; }
 .inq-foot { display: grid; grid-template-columns: 200px 1fr auto; gap: 10px; margin-top: 12px; align-items: start; }
 .inq-foot textarea { min-height: 46px; font-size: 14px; }
 @media (max-width: 640px) { .inq-foot { grid-template-columns: 1fr; } }
@@ -322,6 +329,11 @@ label.f.dirty > span { color: var(--y); }
         <div class="inq-top"><h3>${esc(x.ime)}</h3><span class="when">${when}</span></div>
         <div class="meta">${tel}${mail}${x.kraj ? `<span>📍 ${esc(x.kraj)}</span>` : ''}${x.storitev ? `<span class="tag">${esc(x.storitev)}</span>` : ''}</div>
         <div class="msg">${esc(x.sporocilo)}</div>
+        ${(x.priloge || []).length ? `<div class="att">${x.priloge.map((a) => `
+          <a href="/api/attachment?id=${a.id}" target="_blank" rel="noopener" title="Odpri ${esc(a.ime)}">
+            ${a.tip === 'application/pdf' ? '<span class="pdf">PDF</span>' : `<img src="/api/attachment?id=${a.id}" alt="" loading="lazy">`}
+            <span>${esc(a.ime)}<small>${a.velikost > 1048576 ? (a.velikost / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(a.velikost / 1024)) + ' KB'}</small></span>
+          </a>`).join('')}</div>` : ''}
         <div class="inq-foot">
           <select data-act="status">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${x.status === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
           <textarea data-act="note" placeholder="Interna opomba (npr. poklicano 10. 10., ponudba 3.200 €)">${esc(x.opomba || '')}</textarea>

@@ -12,6 +12,8 @@ module.exports = async (req, res) => {
     if (req.method === 'GET') {
       const rows = await sql`SELECT id, created_at, ime, telefon, email, kraj, storitev, sporocilo, status, opomba
                              FROM povprasevanja ORDER BY created_at DESC LIMIT 500`;
+      const att = await sql`SELECT id, povprasevanje_id, ime, tip, velikost FROM priloge ORDER BY id`;
+      for (const r of rows) r.priloge = att.filter((a) => a.povprasevanje_id === r.id).map(({ povprasevanje_id, ...a }) => a);
       return send(res, 200, { inquiries: rows, statuses: STATUSES });
     }
 

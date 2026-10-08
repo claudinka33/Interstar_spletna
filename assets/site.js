@@ -85,6 +85,69 @@ document.querySelectorAll('.testimonials-track').forEach(track => {
   const msg = form.querySelector('.f-msg');
   const btn = form.querySelector('button[type=submit]');
   const started = Date.now();
+
+  // ---- priloge ----
+  const MAX_FILES = 5, MAX_TOTAL = 3.3 * 1024 * 1024;
+  const fileInput = document.getElementById('fileInput');
+  const fileList = document.getElementById('fileList');
+  const fileDrop = document.getElementById('fileDrop');
+  let files = []; // { name, type, data, size, preview }
+  const b64size = (d) => Math.round((d.length - d.indexOf(',') - 1) * 3 / 4);
+  const fmt = (n) => n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+  const readUrl = (f) => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); });
+  function shrink(f) {
+    return new Promise((ok, no) => {
+      const url = URL.createObjectURL(f), img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        ok(c.toDataURL('image/jpeg', 0.78));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); no(new Error('Slike ni mogoče prebrati')); };
+      img.src = url;
+    });
+  }
+  function drawFiles() {
+    fileList.innerHTML = '';
+    files.forEach((f, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = (f.type === 'application/pdf' ? '<span class="pdf">PDF</span>' : '<img alt="">') +
+        '<span class="nm"></span><span class="sz"></span><button type="button" aria-label="Odstrani prilogo">×</button>';
+      if (f.type !== 'application/pdf') li.querySelector('img').src = f.data;
+      li.querySelector('.nm').textContent = f.name;
+      li.querySelector('.sz').textContent = fmt(f.size);
+      li.querySelector('button').addEventListener('click', () => { files.splice(i, 1); drawFiles(); });
+      fileList.appendChild(li);
+    });
+  }
+  async function addFiles(list) {
+    msg.className = 'f-msg'; msg.textContent = '';
+    for (const f of list) {
+      if (files.length >= MAX_FILES) { msg.textContent = 'Največ ' + MAX_FILES + ' datotek.'; msg.classList.add('err'); break; }
+      const isPdf = f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+      const isImg = /^image\/(jpeg|png|webp)$/.test(f.type) || /\.(jpe?g|png)$/i.test(f.name);
+      if (!isPdf && !isImg) { msg.textContent = '»' + f.name + '« ni PDF, JPG ali PNG.'; msg.classList.add('err'); continue; }
+      try {
+        let data, type, name = f.name;
+        if (isPdf) { data = await readUrl(f); type = 'application/pdf'; }
+        else { data = await shrink(f); type = 'image/jpeg'; name = name.replace(/\.(png|webp|jpe?g)$/i, '') + '.jpg'; }
+        const size = b64size(data);
+        const total = files.reduce((t, x) => t + x.size, 0) + size;
+        if (total > MAX_TOTAL) { msg.textContent = '»' + f.name + '« je prevelika (skupaj največ 3 MB). Večje datoteke pošljite na interstar.doo@gmail.com.'; msg.classList.add('err'); continue; }
+        files.push({ name, type, data, size });
+      } catch (ex) { msg.textContent = ex.message; msg.classList.add('err'); }
+    }
+    drawFiles();
+  }
+  if (fileInput) {
+    fileInput.addEventListener('change', () => { addFiles([...fileInput.files]); fileInput.value = ''; });
+    ['dragenter', 'dragover'].forEach((ev) => fileDrop.addEventListener(ev, (e) => { e.preventDefault(); fileDrop.classList.add('over'); }));
+    ['dragleave', 'drop'].forEach((ev) => fileDrop.addEventListener(ev, (e) => { e.preventDefault(); fileDrop.classList.remove('over'); }));
+    fileDrop.addEventListener('drop', (e) => addFiles([...e.dataTransfer.files]));
+  }
   const done = document.createElement('div');
   done.className = 'inquiry-done';
   done.innerHTML = '<strong>Hvala, povpraševanje je poslano.</strong>Odgovorimo v 24 urah. Če je nujno, pokličite <a href="tel:+386041624728" style="color:var(--yellow)">041 624 728</a>.';
@@ -95,7 +158,11 @@ document.querySelectorAll('.testimonials-track').forEach(track => {
     msg.className = 'f-msg';
     msg.textContent = '';
     form.querySelectorAll('.bad').forEach(el => el.classList.remove('bad'));
-    const d = Object.fromEntries(new FormData(form).entries());
+    const fd = new FormData(form);
+    fd.delete('priloge_input');
+    const d = {};
+    for (const [k, v] of fd.entries()) if (typeof v === 'string') d[k] = v;
+    d.priloge = files.map((f) => ({ name: f.name, type: f.type, data: f.data }));
     d.soglasje = form.soglasje.checked;
     d.t = started;
     d.stran = location.pathname;

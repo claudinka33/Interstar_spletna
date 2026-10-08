@@ -190,6 +190,14 @@ async function ensureTable() {
     stran TEXT,
     ip_hash TEXT
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS priloge (
+    id SERIAL PRIMARY KEY,
+    povprasevanje_id INTEGER NOT NULL REFERENCES povprasevanja(id) ON DELETE CASCADE,
+    ime TEXT NOT NULL,
+    tip TEXT NOT NULL,
+    velikost INTEGER NOT NULL,
+    vsebina TEXT NOT NULL
+  )`;
   _ready = true;
 }
 
