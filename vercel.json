@@ -18,5 +18,12 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/aktualna-dela",
+      "destination": "/projekti",
+      "permanent": true
+    }
   ]
 }

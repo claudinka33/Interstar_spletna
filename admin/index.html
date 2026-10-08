@@ -101,6 +101,11 @@ textarea { resize: vertical; min-height: 46px; }
 .pcard .pi { padding: 14px; }
 .pcard .pi b { display: block; font-size: 15px; }
 .pcard .pi span { color: var(--mut); font-size: 13px; }
+.pcard .pi em { color: var(--y); font-style: normal; }
+.pcard .pos { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,.75); color: #fff; font-weight: 700; font-size: 12px; padding: 2px 8px; }
+.pcard .mv { position: absolute; bottom: 8px; right: 8px; display: flex; gap: 4px; }
+.pcard .mv button { background: var(--y); color: #000; border: none; width: 34px; height: 30px; font-weight: 800; cursor: pointer; }
+.pcard .mv button:disabled { opacity: .3; cursor: default; }
 .editor { background: var(--bg2); border: 1px solid var(--line); padding: 24px; }
 .drop { border: 2px dashed var(--line); padding: 26px; text-align: center; color: var(--mut); cursor: pointer; margin-bottom: 14px; }
 .drop.over, .drop:hover { border-color: var(--y); color: var(--tx); }
@@ -150,7 +155,7 @@ label.f.dirty > span { color: var(--y); }
       <div class="brand">Interstar <b>CMS</b></div>
       <nav class="tabs" id="tabs">
         <button class="tab on" data-view="inq">Povpraševanja<span class="badge" id="newBadge" hidden></span></button>
-        <button class="tab" data-view="proj">Aktualna dela</button>
+        <button class="tab" data-view="proj">Projekti</button>
         <button class="tab" data-view="txt">Besedila</button>
       </nav>
       <div class="top-actions">
@@ -172,12 +177,12 @@ label.f.dirty > span { color: var(--y); }
     <!-- AKTUALNA DELA -->
     <section id="v-proj" hidden>
       <div id="projListView">
-        <div class="head"><h1>Aktualna dela</h1><button class="btn" id="projNew">+ Dodaj delo</button></div>
-        <p class="sub">Zadnja 3 se prikažejo na domači strani, vsa pa na <a href="/aktualna-dela" target="_blank">/aktualna-dela</a>. Po shranjevanju se stran posodobi v približno 1 minuti.</p>
+        <div class="head"><h1>Projekti</h1><button class="btn" id="projNew">+ Dodaj projekt</button></div>
+        <p class="sub">Prvih 6 se prikaže na domači strani v sekciji »Naši projekti«, vsi pa na <a href="/projekti" target="_blank">/projekti</a>. Vrstni red spremeniš s puščicama ← →. Po shranjevanju se stran posodobi v približno 1 minuti.</p>
         <div id="projList"><div class="loading">Nalagam …</div></div>
       </div>
       <div id="projEditView" hidden>
-        <div class="head"><h1 id="peTitle">Novo delo</h1><button class="btn ghost sm" id="peBack">← Nazaj</button></div>
+        <div class="head"><h1 id="peTitle">Nov projekt</h1><button class="btn ghost sm" id="peBack">← Nazaj</button></div>
         <p class="sub">Polja z * so obvezna. Prva slika je naslovna.</p>
         <form class="editor" id="peForm">
           <label class="f"><span>Naslov *</span><input type="text" name="title" maxlength="120" required placeholder="npr. Asfaltiranje parkirišča trgovskega centra"></label>
@@ -186,7 +191,7 @@ label.f.dirty > span { color: var(--y); }
             <label class="f"><span>Kraj</span><input type="text" name="location" maxlength="80" placeholder="npr. Celje"></label>
             <label class="f"><span>Mesec</span><input type="month" name="date"></label>
             <label class="f"><span>Stanje</span>
-              <select name="status"><option value="v-teku">V teku</option><option value="zakljuceno">Zaključeno</option></select></label>
+              <select name="status"><option value="zakljuceno">Zaključeno</option><option value="v-teku">V teku (oznaka »V teku« na sliki)</option></select></label>
           </div>
           <datalist id="cats"><option>Cestna gradnja</option><option>Asfaltiranje</option><option>Urejanje okolice</option><option>Komunalna infrastruktura</option><option>Izredni prevozi</option><option>Rušenje in izkopi</option></datalist>
           <label class="f"><span>Opis</span><textarea name="description" rows="5" maxlength="2000" placeholder="Kaj delamo, obseg, posebnosti …"></textarea></label>
@@ -198,7 +203,7 @@ label.f.dirty > span { color: var(--y); }
           <div class="bar">
             <button class="btn" id="peSave" type="submit">Shrani in objavi</button>
             <span class="grow"></span>
-            <button class="btn danger sm" type="button" id="peDel" hidden>Izbriši delo</button>
+            <button class="btn danger sm" type="button" id="peDel" hidden>Izbriši projekt</button>
           </div>
           <div class="err" id="peErr"></div>
         </form>
@@ -373,19 +378,39 @@ label.f.dirty > span { color: var(--y); }
   const fmtMonth = (d) => { if (!d) return ''; const [y, m] = d.split('-'); return `${m}/${y}`; };
   function renderProj() {
     if (!projects.length) {
-      $('#projList').innerHTML = '<div class="empty">Še ni objavljenih del. Klikni »Dodaj delo«.</div>';
+      $('#projList').innerHTML = '<div class="empty">Še ni projektov. Klikni »Dodaj projekt«.</div>';
       return;
     }
-    const sorted = [...projects].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.createdAt).localeCompare(String(a.createdAt)));
-    $('#projList').innerHTML = '<div class="plist">' + sorted.map((p, i) => `
-      <button class="pcard" data-id="${esc(p.id)}">
+    $('#projList').innerHTML = '<div class="plist">' + projects.map((p, i) => `
+      <div class="pcard" role="button" tabindex="0" data-id="${esc(p.id)}">
         <div class="ph" style="${previews[p.id] ? `background-image:url('${previews[p.id]}')` : p.images && p.images[0] ? `background-image:url('${esc(imgUrl(p, p.images[0]))}')` : ''}">
-          <span class="st ${p.status === 'zakljuceno' ? 'done' : ''}">${p.status === 'zakljuceno' ? 'Zaključeno' : 'V teku'}</span>
+          ${p.status === 'v-teku' ? '<span class="st">V teku</span>' : ''}
+          <span class="pos">${i + 1}</span>
+          <span class="mv"><button type="button" data-mv="-1" title="Premakni naprej" ${i === 0 ? 'disabled' : ''}>←</button><button type="button" data-mv="1" title="Premakni nazaj" ${i === projects.length - 1 ? 'disabled' : ''}>→</button></span>
         </div>
-        <div class="pi"><b>${esc(p.title)}</b><span>${esc([p.location, fmtMonth(p.date)].filter(Boolean).join(' · '))}${i < 3 ? ' · na domači strani' : ''}</span></div>
-      </button>`).join('') + '</div>';
+        <div class="pi"><b>${esc(p.title)}</b><span>${esc([p.category, p.location, fmtMonth(p.date)].filter(Boolean).join(' · '))}${i < 6 ? '<em> · domača stran</em>' : ''}</span></div>
+      </div>`).join('') + '</div>';
   }
-  $('#projList').addEventListener('click', (e) => { const c = e.target.closest('.pcard'); if (c) openEditor(projects.find((p) => p.id === c.dataset.id)); });
+  let orderT;
+  $('#projList').addEventListener('click', (e) => {
+    const c = e.target.closest('.pcard');
+    if (!c) return;
+    const mv = e.target.closest('[data-mv]');
+    if (mv) {
+      const i = projects.findIndex((p) => p.id === c.dataset.id), j = i + Number(mv.dataset.mv);
+      if (j < 0 || j >= projects.length) return;
+      [projects[i], projects[j]] = [projects[j], projects[i]];
+      renderProj();
+      clearTimeout(orderT);
+      orderT = setTimeout(async () => {
+        try { await api('projects', { method: 'POST', body: { action: 'reorder', ids: projects.map((p) => p.id) } }); toast('Vrstni red shranjen ✓ Na strani v ~1 minuti.'); }
+        catch (ex) { toast(ex.message, true); }
+      }, 1200);
+      return;
+    }
+    openEditor(projects.find((p) => p.id === c.dataset.id));
+  });
+  $('#projList').addEventListener('keydown', (e) => { const c = e.target.closest('.pcard'); if (c && e.key === 'Enter' && e.target === c) openEditor(projects.find((p) => p.id === c.dataset.id)); });
   $('#projNew').addEventListener('click', () => openEditor(null));
   $('#peBack').addEventListener('click', closeEditor);
 
@@ -394,14 +419,14 @@ label.f.dirty > span { color: var(--y); }
     const f = $('#peForm');
     f.reset();
     $('#peErr').textContent = '';
-    $('#peTitle').textContent = p ? 'Uredi delo' : 'Novo delo';
+    $('#peTitle').textContent = p ? 'Uredi projekt' : 'Nov projekt';
     $('#peDel').hidden = !p;
     const now = new Date();
     f.title.value = p ? p.title : '';
     f.category.value = p ? p.category || '' : '';
     f.location.value = p ? p.location || '' : '';
     f.date.value = p ? p.date || '' : `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    f.status.value = p ? p.status : 'v-teku';
+    f.status.value = p && p.status === 'v-teku' ? 'v-teku' : 'zakljuceno';
     f.description.value = p ? p.description || '' : '';
     imgs = p ? (p.images || []).map((src) => ({ src, view: imgUrl(p, src) })) : [];
     renderThumbs();
@@ -499,7 +524,7 @@ label.f.dirty > span { color: var(--y); }
   });
   $('#peDel').addEventListener('click', async (e) => {
     const b = e.currentTarget;
-    if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'Klikni še enkrat za izbris'; setTimeout(() => { delete b.dataset.sure; b.textContent = 'Izbriši delo'; }, 4000); return; }
+    if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'Klikni še enkrat za izbris'; setTimeout(() => { delete b.dataset.sure; b.textContent = 'Izbriši projekt'; }, 4000); return; }
     b.disabled = true;
     try {
       await api('projects?id=' + encodeURIComponent(editing.id), { method: 'DELETE' });
@@ -508,7 +533,7 @@ label.f.dirty > span { color: var(--y); }
       closeEditor();
       toast('Delo izbrisano');
     } catch (ex) { $('#peErr').textContent = ex.message; }
-    b.disabled = false; delete b.dataset.sure; b.textContent = 'Izbriši delo';
+    b.disabled = false; delete b.dataset.sure; b.textContent = 'Izbriši projekt';
   });
 
   // ---------- BESEDILA ----------

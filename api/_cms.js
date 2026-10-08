@@ -154,68 +154,57 @@ function fmtDate(d) {
   return `${name.charAt(0).toUpperCase() + name.slice(1)} ${m[1]}`;
 }
 
+// Vrstni red določa admin (puščici gor/dol) – prvi v seznamu je prvi na strani.
 function sortProjects(list) {
-  return [...list].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  return [...list];
 }
+
+const HOME_COUNT = 6;
 
 function card(p, i) {
   // ?v= prepreči, da bi brskalnik prikazal staro (predpomnjeno) verzijo slike
   const ver = String(p.updatedAt || '').replace(/\D/g, '').slice(-8) || '1';
-  const imgs = (p.images || []).filter(Boolean).map((u) => `${u}?v=${ver}`);
+  const imgs = (p.images || []).filter(Boolean).map((u) => (u.startsWith('/') ? `${u}?v=${ver}` : u));
   const cover = imgs[0];
   const delay = i % 3 ? ` reveal-delay-${i % 3}` : '';
-  const status = p.status === 'zakljuceno' ? 'Zaključeno' : 'V teku';
-  const statusCls = p.status === 'zakljuceno' ? 'done' : 'live';
+  const live = p.status === 'v-teku';
   const meta = [p.location, fmtDate(p.date)].filter(Boolean).map(esc).join(' · ');
-  const alt = esc([p.title, p.location].filter(Boolean).join(' — ') + ' — Interstar d.o.o.');
+  const alt = esc(p.alt || [p.title, p.location].filter(Boolean).join(' — ') + ' — Interstar d.o.o.');
   const desc = esc(p.description || '').replace(/\n/g, '<br>');
   return `      <article class="project-card ak-card reveal${delay}" tabindex="0" role="button" aria-label="${esc(p.title)} — odpri galerijo" data-images="${esc(imgs.join('|'))}">
         <div class="project-image">
           ${cover ? `<img src="${esc(cover)}" alt="${alt}" loading="lazy" width="600" height="450">` : '<div class="ak-noimg" aria-hidden="true"></div>'}
-          <span class="ak-status ak-${statusCls}">${status}</span>
+          ${live ? '<span class="ak-status ak-live">V teku</span>' : ''}
           ${imgs.length > 1 ? `<span class="ak-count">${imgs.length} slik</span>` : ''}
         </div>
         <div class="project-info">
           ${p.category ? `<span class="project-tag">${esc(p.category)}</span>` : ''}
           <h3>${esc(p.title)}</h3>
           ${meta ? `<p class="ak-meta">${meta}</p>` : ''}
-          <p class="ak-desc">${desc}</p>
+          ${desc ? `<p class="ak-desc">${desc}</p>` : ''}
         </div>
       </article>`;
 }
 
+// Mreža v sekciji "Naši projekti" na domači strani.
 function renderHomeSection(projects) {
-  const list = sortProjects(projects).slice(0, 3);
-  if (!list.length) return '\n';
+  const list = sortProjects(projects);
+  const shown = list.slice(0, HOME_COUNT);
   return `
-<section id="aktualno" class="aktualno" aria-labelledby="aktualno-title">
-  <div class="container">
-    <div class="section-header">
-      <div>
-        <span class="section-label reveal">Aktualno</span>
-        <h2 class="section-title reveal reveal-delay-1" id="aktualno-title">
-          Trenutno<br><span class="yellow">na terenu.</span>
-        </h2>
-      </div>
-      <p class="section-intro reveal reveal-delay-2">
-        Dela, ki jih izvajamo ta trenutek, in projekti, ki smo jih pravkar zaključili.
-      </p>
-    </div>
     <div class="projects-grid">
-${list.map(card).join('\n')}
+${shown.map(card).join('\n')}
     </div>
     <div class="ak-more reveal">
-      <a href="/aktualna-dela" class="btn btn-primary">Vsa aktualna dela <span class="arrow">→</span></a>
+      <a href="/projekti" class="btn btn-primary">${list.length > HOME_COUNT ? `Vsi projekti (${list.length})` : 'Vsi projekti'} <span class="arrow">→</span></a>
     </div>
-  </div>
-</section>
 `;
 }
 
+// Vsi projekti na podstrani /projekti.
 function renderAllGrid(projects) {
   const list = sortProjects(projects);
   if (!list.length) {
-    return '\n    <p class="ak-empty">Kmalu bomo tukaj objavili naša aktualna dela. Za informacije nas pokličite na <a href="tel:+386041624728">041 624 728</a>.</p>\n';
+    return '\n    <p class="ak-empty">Kmalu bomo tukaj objavili naše projekte. Za informacije nas pokličite na <a href="tel:+386041624728">041 624 728</a>.</p>\n';
   }
   return `\n    <div class="projects-grid">\n${list.map(card).join('\n')}\n    </div>\n`;
 }

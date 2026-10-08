@@ -2,7 +2,8 @@ const crypto = require('crypto');
 const { send, fail, requireAuth, readFile, commit } = require('./_lib');
 const { renderHomeSection, renderAllGrid, replaceBetween } = require('./_cms');
 
-const IMG_DIR = 'images/aktualno';
+const IMG_DIR = 'images/projekti';
+const isOwn = (u) => typeof u === 'string' && u.startsWith('/images/');
 const MAX_IMAGE_BYTES = 2.5 * 1024 * 1024;
 
 function slug(s) {
@@ -23,7 +24,7 @@ function clean(p) {
     category: str(p.category, 60),
     location: str(p.location, 80),
     date,
-    status: p.status === 'zakljuceno' ? 'zakljuceno' : 'v-teku',
+    status: p.status === 'v-teku' ? 'v-teku' : 'zakljuceno',
     description: str(p.description, 2000),
   };
 }
@@ -35,12 +36,34 @@ async function loadProjects() {
 
 // Pripravi vse datoteke, ki se spremenijo, ko se seznam projektov spremeni.
 async function renderedFiles(projects) {
-  const [index, page] = await Promise.all([readFile('index.html'), readFile('aktualna-dela.html')]);
+  const [index, page] = await Promise.all([readFile('index.html'), readFile('projekti.html')]);
   return [
     { path: 'data/projects.json', text: JSON.stringify(projects, null, 2) + '\n' },
-    { path: 'index.html', text: replaceBetween(index, 'AKTUALNO', renderHomeSection(projects)) },
-    { path: 'aktualna-dela.html', text: replaceBetween(page, 'AKTUALNA-DELA', renderAllGrid(projects)) },
+    { path: 'index.html', text: replaceBetween(index, 'PROJEKTI', renderHomeSection(projects)) },
+    { path: 'projekti.html', text: replaceBetween(page, 'PROJEKTI-VSI', renderAllGrid(projects)) },
   ];
+}
+
+// Prenese slike s tujih strežnikov (npr. stari CDN) v repozitorij.
+async function importExternal(projects) {
+  const files = [];
+  let count = 0;
+  for (const p of projects) {
+    const imgs = [];
+    for (const u of p.images || []) {
+      if (!/^https?:\/\//.test(u)) { imgs.push(u); continue; }
+      const r = await fetch(u);
+      if (!r.ok) throw new Error(`Slike ni bilo mogoče prenesti: ${u} (${r.status})`);
+      const buf = Buffer.from(await r.arrayBuffer());
+      const ext = (u.match(/\.(jpe?g|png|webp)(\?|$)/i) || [, 'jpg'])[1].toLowerCase().replace('jpeg', 'jpg');
+      const path = `${IMG_DIR}/${p.id}-${crypto.randomBytes(3).toString('hex')}.${ext}`;
+      files.push({ path, base64: buf.toString('base64') });
+      imgs.push('/' + path);
+      count++;
+    }
+    p.images = imgs;
+  }
+  return { files, count };
 }
 
 module.exports = async (req, res) => {
@@ -52,6 +75,26 @@ module.exports = async (req, res) => {
 
     if (req.method === 'POST') {
       const body = req.body || {};
+
+      // vrstni red
+      if (body.action === 'reorder') {
+        const ids = Array.isArray(body.ids) ? body.ids : [];
+        const byId = new Map(projects.map((p) => [p.id, p]));
+        const next = ids.filter((i) => byId.has(i)).map((i) => byId.get(i));
+        projects.forEach((p) => { if (!ids.includes(p.id)) next.push(p); });
+        const sha = await commit(await renderedFiles(next), 'CMS: spremenjen vrstni red projektov');
+        return send(res, 200, { ok: true, projects: next, commit: sha });
+      }
+
+      // prenos slik s starega CDN-ja na GitHub
+      if (body.action === 'import-external') {
+        const { files, count } = await importExternal(projects);
+        if (!count) return send(res, 200, { ok: true, count: 0 });
+        files.push(...(await renderedFiles(projects)));
+        const sha = await commit(files, `CMS: ${count} slik preneseno na GitHub`);
+        return send(res, 200, { ok: true, count, commit: sha });
+      }
+
       const data = clean(body.project || {});
       if (!data.title) return send(res, 400, { error: 'Vpiši naslov projekta' });
 
@@ -60,7 +103,7 @@ module.exports = async (req, res) => {
       if (id && !existing) return send(res, 404, { error: 'Projekt ne obstaja več' });
       const pid = existing ? existing.id : `${slug(data.title)}-${crypto.randomBytes(3).toString('hex')}`;
 
-      // slike: order = ['images/aktualno/x.jpg', 'new:0', ...]
+      // slike: order = ['/images/projekti/x.jpg', 'new:0', ...]
       const order = Array.isArray(body.order) ? body.order : [];
       const newImages = Array.isArray(body.newImages) ? body.newImages : [];
       const files = [];
@@ -86,16 +129,17 @@ module.exports = async (req, res) => {
       // izbrisane slike odstrani tudi z GitHuba
       if (existing) {
         for (const old of existing.images || []) {
-          if (!images.includes(old) && old.startsWith(`/${IMG_DIR}/`)) files.push({ path: old.slice(1), remove: true });
+          if (!images.includes(old) && isOwn(old)) files.push({ path: old.slice(1), remove: true });
         }
       }
 
       const now = new Date().toISOString();
-      const project = { id: pid, ...data, images, createdAt: existing ? existing.createdAt : now, updatedAt: now };
+      const keepAlt = existing && existing.alt && existing.title === data.title ? { alt: existing.alt } : {};
+      const project = { id: pid, ...data, ...keepAlt, images, createdAt: existing ? existing.createdAt : now, updatedAt: now };
       const next = existing ? projects.map((p) => (p.id === pid ? project : p)) : [project, ...projects];
 
       files.push(...(await renderedFiles(next)));
-      const sha = await commit(files, `CMS: ${existing ? 'posodobljeno' : 'novo'} aktualno delo – ${data.title}`);
+      const sha = await commit(files, `CMS: ${existing ? 'posodobljen' : 'nov'} projekt – ${data.title}`);
       return send(res, 200, { ok: true, project, commit: sha });
     }
 
@@ -105,10 +149,10 @@ module.exports = async (req, res) => {
       if (!p) return send(res, 404, { error: 'Projekt ne obstaja' });
       const next = projects.filter((x) => x.id !== id);
       const files = (p.images || [])
-        .filter((u) => u.startsWith(`/${IMG_DIR}/`))
+        .filter(isOwn)
         .map((u) => ({ path: u.slice(1), remove: true }));
       files.push(...(await renderedFiles(next)));
-      const sha = await commit(files, `CMS: izbrisano aktualno delo – ${p.title}`);
+      const sha = await commit(files, `CMS: izbrisan projekt – ${p.title}`);
       return send(res, 200, { ok: true, commit: sha });
     }
 
