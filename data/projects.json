@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "nova-cesta-logarska-dolina-885fef",
+    "title": "Nova cesta Logarska Dolina",
+    "category": "Cestna gradnja",
+    "location": "Logarska Dolina",
+    "date": "2026-07",
+    "status": "zakljuceno",
+    "description": "",
+    "images": [
+      "/images/aktualno/nova-cesta-logarska-dolina-885fef-bda6c1.jpg",
+      "/images/aktualno/nova-cesta-logarska-dolina-885fef-8718e6.jpg",
+      "/images/aktualno/nova-cesta-logarska-dolina-885fef-1347e0.jpg",
+      "/images/aktualno/nova-cesta-logarska-dolina-885fef-a82439.jpg"
+    ],
+    "createdAt": "2026-10-08T15:24:03.743Z",
+    "updatedAt": "2026-10-08T15:24:03.743Z"
+  }
+]
