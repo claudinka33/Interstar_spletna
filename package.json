@@ -1,0 +1,9 @@
+{
+  "name": "interstar-spletna",
+  "private": true,
+  "description": "Spletna stran Interstar d.o.o. z enostavnim CMS-jem",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.0"
+  }
+}
