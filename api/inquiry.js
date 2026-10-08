@@ -8,7 +8,7 @@ async function notify(row) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return; // e-mail obvestila še niso nastavljena
   const to = (process.env.NOTIFY_EMAIL || 'interstar.doo@gmail.com').split(',').map((s) => s.trim());
-  const from = process.env.MAIL_FROM || 'Interstar spletna stran <onboarding@resend.dev>';
+  const from = process.env.MAIL_FROM || 'Interstar spletna stran <obvestila@interstar.si>';
   const rows = [
     ['Ime', row.ime],
     ['Telefon', row.telefon],
