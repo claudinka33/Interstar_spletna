@@ -159,7 +159,9 @@ function sortProjects(list) {
 }
 
 function card(p, i) {
-  const imgs = (p.images || []).filter(Boolean);
+  // ?v= prepreči, da bi brskalnik prikazal staro (predpomnjeno) verzijo slike
+  const ver = String(p.updatedAt || '').replace(/\D/g, '').slice(-8) || '1';
+  const imgs = (p.images || []).filter(Boolean).map((u) => `${u}?v=${ver}`);
   const cover = imgs[0];
   const delay = i % 3 ? ` reveal-delay-${i % 3}` : '';
   const status = p.status === 'zakljuceno' ? 'Zaključeno' : 'V teku';

@@ -367,6 +367,9 @@ label.f.dirty > span { color: var(--y); }
       renderProj();
     } catch (ex) { $('#projList').innerHTML = `<div class="empty">${esc(ex.message)}</div>`; }
   }
+  const previews = {}; // lokalni predogled naslovne slike, dokler se stran ne objavi
+  const ver = (p) => String(p.updatedAt || '').replace(/\D/g, '').slice(-8) || '1';
+  const imgUrl = (p, src) => `${src}?v=${ver(p)}`;
   const fmtMonth = (d) => { if (!d) return ''; const [y, m] = d.split('-'); return `${m}/${y}`; };
   function renderProj() {
     if (!projects.length) {
@@ -376,7 +379,7 @@ label.f.dirty > span { color: var(--y); }
     const sorted = [...projects].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.createdAt).localeCompare(String(a.createdAt)));
     $('#projList').innerHTML = '<div class="plist">' + sorted.map((p, i) => `
       <button class="pcard" data-id="${esc(p.id)}">
-        <div class="ph" style="${p.images && p.images[0] ? `background-image:url('${esc(p.images[0])}')` : ''}">
+        <div class="ph" style="${previews[p.id] ? `background-image:url('${previews[p.id]}')` : p.images && p.images[0] ? `background-image:url('${esc(imgUrl(p, p.images[0]))}')` : ''}">
           <span class="st ${p.status === 'zakljuceno' ? 'done' : ''}">${p.status === 'zakljuceno' ? 'Zaključeno' : 'V teku'}</span>
         </div>
         <div class="pi"><b>${esc(p.title)}</b><span>${esc([p.location, fmtMonth(p.date)].filter(Boolean).join(' · '))}${i < 3 ? ' · na domači strani' : ''}</span></div>
@@ -400,7 +403,7 @@ label.f.dirty > span { color: var(--y); }
     f.date.value = p ? p.date || '' : `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     f.status.value = p ? p.status : 'v-teku';
     f.description.value = p ? p.description || '' : '';
-    imgs = p ? (p.images || []).map((src) => ({ src })) : [];
+    imgs = p ? (p.images || []).map((src) => ({ src, view: imgUrl(p, src) })) : [];
     renderThumbs();
     $('#projListView').hidden = true;
     $('#projEditView').hidden = false;
@@ -410,7 +413,7 @@ label.f.dirty > span { color: var(--y); }
 
   function renderThumbs() {
     $('#thumbs').innerHTML = imgs.map((im, i) => `
-      <div class="th ${i === 0 ? 'cover' : ''}" style="background-image:url('${im.data || esc(im.src)}')">
+      <div class="th ${i === 0 ? 'cover' : ''}" style="background-image:url('${im.data || esc(im.view || im.src)}')">
         ${i === 0 ? '<span class="lbl">Naslovna</span>' : ''}${im.data ? '<span class="new">NOVA</span>' : ''}
         <div class="acts">
           <button type="button" data-mv="-1" data-i="${i}" title="Premakni levo">←</button>
@@ -485,6 +488,7 @@ label.f.dirty > span { color: var(--y); }
     btn.disabled = true; btn.textContent = 'Objavljam …';
     try {
       const j = await api('projects', { method: 'POST', body });
+      if (imgs[0] && imgs[0].data) previews[j.project.id] = imgs[0].data;
       const i = projects.findIndex((p) => p.id === j.project.id);
       if (i >= 0) projects[i] = j.project; else projects.unshift(j.project);
       renderProj();
