@@ -49,7 +49,7 @@
       bar.querySelector('.cookie-yes').addEventListener('click', function () { save('da'); hide(); loadGA(); });
       bar.querySelector('.cookie-no').addEventListener('click', function () { save('ne'); hide(); clearGA(); });
     }
-    requestAnimationFrame(function () { bar.classList.add('show'); });
+    setTimeout(function () { bar.classList.add('show'); }, 30);
   }
 
   function init() {
