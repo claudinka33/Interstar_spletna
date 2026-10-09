@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://interstar.si/sitemap.xml
+Sitemap: https://www.interstar.si/sitemap.xml

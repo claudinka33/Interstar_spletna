@@ -49,7 +49,7 @@ async function notify(row, files) {
       <table>${rows}</table>
       <p style="margin-top:16px;white-space:pre-wrap">${esc(row.sporocilo)}</p>
       ${files.length ? `<p style="margin-top:16px;color:#666">📎 Priloge (${files.length}): ${files.map((f) => `${esc(f.ime)} (${fmtSize(f.velikost)})`).join(', ')} – v priponki tega e-maila in v adminu.</p>` : ''}
-      <p style="margin-top:24px"><a href="https://interstar.si/admin" style="background:#FFD400;color:#000;padding:10px 18px;text-decoration:none;font-weight:bold">Odpri v adminu</a></p>
+      <p style="margin-top:24px"><a href="https://www.interstar.si/admin" style="background:#FFD400;color:#000;padding:10px 18px;text-decoration:none;font-weight:bold">Odpri v adminu</a></p>
     </div></div>`;
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
