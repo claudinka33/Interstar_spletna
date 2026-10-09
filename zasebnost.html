@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=3">
+<link rel="stylesheet" href="/assets/site.css?v=4">
 </head>
 <body>
 
@@ -48,7 +48,7 @@
   <div class="container">
     <span class="section-label">Pravno</span>
     <h1 class="section-title" id="pz-title">Politika<br><span class="yellow">zasebnosti.</span></h1>
-    <p>Velja od 8. 10. 2026.</p>
+    <p>Velja od 9. 10. 2026.</p>
   </div>
 </section>
 
@@ -68,10 +68,12 @@
     <p>Povpraševanja hranimo največ 2 leti od zadnjega stika. Če z nami sklenete pogodbo, podatke hranimo toliko časa, kot to zahtevajo predpisi (npr. računovodski).</p>
 
     <h2>5. Obdelovalci in prenos podatkov</h2>
-    <p>Za delovanje spletne strani uporabljamo zanesljive ponudnike, ki podatke obdelujejo v našem imenu: Vercel Inc. (gostovanje strani), Neon Inc. (podatkovna baza) in ponudnika za pošiljanje e-mail obvestil. Ti ponudniki lahko podatke obdelujejo tudi zunaj EU, pri čemer je prenos zavarovan s standardnimi pogodbenimi klavzulami Evropske komisije.</p>
+    <p>Za delovanje spletne strani uporabljamo zanesljive ponudnike, ki podatke obdelujejo v našem imenu: Vercel Inc. (gostovanje strani), Neon Inc. (podatkovna baza), Resend Inc. (pošiljanje e-mail obvestil) in – ob vaši privolitvi – Google Ireland Ltd. (Google Analytics). Ti ponudniki lahko podatke obdelujejo tudi zunaj EU, pri čemer je prenos zavarovan s standardnimi pogodbenimi klavzulami Evropske komisije.</p>
 
-    <h2>6. Piškotki in analitika</h2>
-    <p>Spletna stran uporablja le piškotke, ki so nujni za njeno delovanje. Če bomo uvedli merjenje obiska (npr. Google Analytics), bomo to storili šele po vaši izrecni privolitvi prek pasice za piškotke, to politiko pa ustrezno dopolnili.</p>
+    <h2 id="piskotki">6. Piškotki in analitika</h2>
+    <p>Nujni elementi delovanja strani ne uporabljajo piškotkov za sledenje. Vašo izbiro glede piškotkov shranimo v vašem brskalniku (localStorage), da vas ne sprašujemo ob vsakem obisku.</p>
+    <p>Samo če kliknete »Sprejmi«, naložimo <strong>Google Analytics 4</strong> (Google Ireland Ltd.), s katerim merimo obisk strani, vire obiska ter klike na telefon, e-mail in oddana povpraševanja. Google Analytics nastavi piškotke <code>_ga</code> in <code>_ga_*</code>, ki se hranijo do 2 leti. Podatki se obdelujejo v skladu s pogodbo o obdelavi podatkov z Googlom in se lahko prenašajo tudi v ZDA (okvir EU-US Data Privacy Framework).</p>
+    <p>Če kliknete »Zavrni«, Google Analytics ni naložen. Svojo odločitev lahko kadar koli spremenite prek povezave <button type="button" class="link-btn" data-cookie-settings>Nastavitve piškotkov</button> v nogi strani.</p>
 
     <h2>7. Vaše pravice</h2>
     <p>Kadar koli lahko zahtevate dostop do svojih podatkov, popravek, izbris ali omejitev obdelave, ugovarjate obdelavi ali prekličete privolitev. Zahtevo pošljite na <a href="mailto:interstar.doo@gmail.com">interstar.doo@gmail.com</a>. Če menite, da kršimo predpise, lahko vložite pritožbo pri Informacijskem pooblaščencu RS (<a href="https://www.ip-rs.si" rel="noopener">www.ip-rs.si</a>).</p>
@@ -120,7 +122,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Interstar d.o.o. Vse pravice pridržane. · <a href="/zasebnost">Politika zasebnosti</a></span>
+    <span>© 2026 Interstar d.o.o. Vse pravice pridržane. · <a href="/zasebnost">Politika zasebnosti</a> · <button type="button" class="link-btn" data-cookie-settings>Nastavitve piškotkov</button></span>
     <span>Trdno na tleh, stabilno v prihodnost.</span>
   </div>
 </footer>
@@ -132,6 +134,7 @@
   </svg>
 </a>
 
-<script src="/assets/site.js?v=3" defer></script>
+<script src="/assets/site.js?v=4" defer></script>
+<script src="/assets/consent.js?v=1" defer></script>
 </body>
 </html>
