@@ -16,9 +16,8 @@
 <meta name="theme-color" content="#FFD400">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/site.css?v=4">
 </head>
 <body>
@@ -28,7 +27,7 @@
 <header>
 <nav class="nav" id="nav" aria-label="Glavna navigacija">
   <a href="/" class="nav-logo" aria-label="Interstar d.o.o. — domov">
-    <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a1339beb3e0c02fe7e1ac36.png" alt="Interstar d.o.o. — gradbeno podjetje Štore logo" class="nav-logo-img" width="200" height="56">
+    <img src="/media/6a1339beb3e0c02fe7e1ac36.png" alt="Interstar d.o.o. — gradbeno podjetje Štore logo" class="nav-logo-img" width="200" height="56">
   </a>
   <ul class="nav-links" id="navLinks">
     <li><a href="/#o-nas">O nas</a></li>
@@ -48,7 +47,7 @@
   <div class="container">
     <span class="section-label">Pravno</span>
     <h1 class="section-title" id="pz-title">Politika<br><span class="yellow">zasebnosti.</span></h1>
-    <p>Velja od 9. 10. 2026.</p>
+    <p>Velja od 9. 11. 2026.</p>
   </div>
 </section>
 
@@ -71,7 +70,7 @@
     <p>Za delovanje spletne strani uporabljamo zanesljive ponudnike, ki podatke obdelujejo v našem imenu: Vercel Inc. (gostovanje strani), Neon Inc. (podatkovna baza), Resend Inc. (pošiljanje e-mail obvestil) in – ob vaši privolitvi – Google Ireland Ltd. (Google Analytics). Ti ponudniki lahko podatke obdelujejo tudi zunaj EU, pri čemer je prenos zavarovan s standardnimi pogodbenimi klavzulami Evropske komisije.</p>
 
     <h2 id="piskotki">6. Piškotki in analitika</h2>
-    <p>Nujni elementi delovanja strani ne uporabljajo piškotkov za sledenje. Vašo izbiro glede piškotkov shranimo v vašem brskalniku (localStorage), da vas ne sprašujemo ob vsakem obisku.</p>
+    <p>Nujni elementi delovanja strani ne uporabljajo piškotkov za sledenje. Vašo izbiro glede piškotkov shranimo v vašem brskalniku (localStorage), da vas ne sprašujemo ob vsakem obisku. Pisave in slike so naložene z naše domene, zato se ob obisku strani brez vaše privolitve ne vzpostavi nobena povezava s strežniki tretjih oseb (npr. Google).</p>
     <p>Samo če kliknete »Sprejmi«, naložimo <strong>Google Analytics 4</strong> (Google Ireland Ltd.), s katerim merimo obisk strani, vire obiska ter klike na telefon, e-mail in oddana povpraševanja. Google Analytics nastavi piškotke <code>_ga</code> in <code>_ga_*</code>, ki se hranijo do 2 leti. Podatki se obdelujejo v skladu s pogodbo o obdelavi podatkov z Googlom in se lahko prenašajo tudi v ZDA (okvir EU-US Data Privacy Framework).</p>
     <p>Če kliknete »Zavrni«, Google Analytics ni naložen. Svojo odločitev lahko kadar koli spremenite prek povezave <button type="button" class="link-btn" data-cookie-settings>Nastavitve piškotkov</button> v nogi strani.</p>
 
@@ -84,7 +83,7 @@
 <footer aria-label="Footer">
   <div class="footer-grid">
     <div class="footer-brand">
-      <img src="https://assets.cdn.filesafe.space/x59KaDfsCMuhMlks5lOI/media/6a1339beb3e0c02fe7e1ac36.png" alt="Interstar d.o.o. logo" class="footer-logo-img" width="200" height="60">
+      <img src="/media/6a1339beb3e0c02fe7e1ac36.png" alt="Interstar d.o.o. logo" class="footer-logo-img" width="200" height="60">
       <p>Gradbeno podjetje za nizko gradnjo, asfaltiranje, komunalno infrastrukturo in izredne prevoze. Od leta 1999 v Štorah pri Celju.</p>
     </div>
     <nav class="footer-col" aria-label="Footer navigacija">
