@@ -41,7 +41,7 @@
       bar.setAttribute('aria-label', 'Nastavitve piškotkov');
       bar.innerHTML =
         '<div class="cookie-in">' +
-        '<p><strong>Piškotki</strong> Z vašim dovoljenjem uporabljamo Google Analytics, da vidimo, kako obiskovalci uporabljajo stran, in jo izboljšamo. ' +
+        '<p><strong>Piškotki</strong> Za analizo obiska spletne strani uporabljamo piškotke Google Analytics, a le z vašo privolitvijo. ' +
         '<a href="/zasebnost#piskotki">Več o tem</a></p>' +
         '<div class="cookie-btns"><button type="button" class="cookie-no">Zavrni</button><button type="button" class="cookie-yes">Sprejmi</button></div>' +
         '</div>';
